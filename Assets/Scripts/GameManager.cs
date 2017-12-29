@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour {
 
 	public Text platformLevelText;
-	public GameObject platform, startingPlatform, player, wall;
+	public GameObject platform, startingPlatform, player, rightWall,leftWall;
 	private Vector3 spawnPosition, wallSpawnPosition;
 	public float startingSpawnRate, spaceBetweenPlatforms;
 	public int platformCount, platformLevel = -1;
 	public static GameManager gameManager;
-
+	Rigidbody2D rbPlayer;
 	void Awake(){
 		if(gameManager == null){
 			gameManager = this;
@@ -22,6 +22,13 @@ public class GameManager : MonoBehaviour {
 	}
 		
 	void Start () {
+		rbPlayer = player.GetComponent <Rigidbody2D>();
+		/*if(rbPlayer = null){
+			Debug.LogError("rbPlayer NULL");
+		}else{
+			Debug.Log("rbPlayer = " + rbPlayer.name);
+
+		}*/
 		spawnPosition.y = -3f;
 		StartCoroutine("spawnCoroutine");
 	}
@@ -42,7 +49,13 @@ public class GameManager : MonoBehaviour {
 		{
 			PlatformSpawner();
 
+			if(platformLevel % 20 == 0 ){
+				Debug.Log("gravity increased");
+				rbPlayer.gravityScale *= 1.5f;
+			}
+
 			yield return new WaitForSeconds(startingSpawnRate);
+
 
 		} while(true);
 	}
@@ -53,12 +66,13 @@ public class GameManager : MonoBehaviour {
 			if (platformCount % 10 == 0)
 			{
 				wallSpawnPosition.x = -20f;
-				Instantiate(wall, wallSpawnPosition, transform.rotation);
+				Instantiate(leftWall, wallSpawnPosition, transform.rotation);
 				wallSpawnPosition.x = 20f;
-				Instantiate(wall, wallSpawnPosition, transform.rotation);
+				Instantiate(rightWall, wallSpawnPosition, transform.rotation);
 
 				spawnPosition.x = 0f;
 				Instantiate(startingPlatform, spawnPosition, transform.rotation);
+
 
 			}
 			else

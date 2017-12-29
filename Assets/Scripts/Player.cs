@@ -4,20 +4,22 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-	Animator anim;
-	Rigidbody2D rb;
-	public float jumpForce;
-	public float moveForce;
+	public float jumpForce, moveForce, timeBetweenBang;
 	//public Vector2 wallAddForce;
 	public bool canJump;
-	//[SerializeField]
-	Vector2 newVelocity, changedVelocity/*, actualVelocity*/;
-
+	public Vector2 OriginalwallMultiply;
+	[SerializeField]
+	Vector2 newVelocity, changedVelocity,wallMultiply/*, actualVelocity*/;
+	Animator anim;
+	Rigidbody2D rb;
+	[SerializeField]
+	float rightBangTime, leftBangTime;
 
 	void Start () {
 		rb = gameObject.GetComponent<Rigidbody2D>();
 		anim = gameObject.GetComponent<Animator>();
 		canJump = true;
+		wallMultiply = OriginalwallMultiply;
 		newVelocity.y = 0f;
 	}
 
@@ -57,9 +59,9 @@ public class Player : MonoBehaviour {
 		//Debug.Log("collisionEnter with: " + collision.gameObject.name);
 		if(collision.gameObject.CompareTag("Platform")){
 			canJump = true;
-		}else if(collision.gameObject.CompareTag("Wall")){
+		}else if(collision.gameObject.CompareTag("RightWall")||collision.gameObject.CompareTag("LeftWall")){
 			
-			anim.SetTrigger("GravityDown");  //scaling gravity over time
+			//anim.SetTrigger("GravityDown");  //scaling gravity over time
 
 			if (rb.velocity.y > 0)  //multiplying Y VELOCITY
 			{
@@ -67,12 +69,62 @@ public class Player : MonoBehaviour {
 
 				// blocking/adding force opposite wall
 
-				Vector2 velo = rb.velocity;
+				/*Vector2 velo = rb.velocity;
 				velo.y *= 1.3f;
 				//rb.AddForce(wallAddForce, ForceMode2D.Force);
-				rb.velocity = velo;
+				rb.velocity = velo;*/// multiplying y velo is in ontrigger\|/
 			}
 		}
+	}
+
+	void OnTriggerEnter2D(Collider2D collision){
+		if (collision.gameObject.CompareTag("RightWall")){
+			//Debug.Log("triggerEnter with: " + collision.gameObject.name);
+
+			if(CanWallBang(rightBangTime)){
+				rightBangTime = (float)Time.time;
+				wallMultiply = OriginalwallMultiply;
+			}else{
+				rightBangTime = (float)Time.time;
+				wallMultiply.y = 1.1f;
+			}
+
+			if(rb.velocity.x > 0f){
+				rb.velocity = new Vector2(-rb.velocity.x * wallMultiply.x , (rb.velocity.y > 0) ? rb.velocity.y * wallMultiply.y : rb.velocity.y);
+			}else{
+				rb.velocity = new Vector2(rb.velocity.x * wallMultiply.x, (rb.velocity.y > 0) ? rb.velocity.y * wallMultiply.y : rb.velocity.y);
+			}
+
+		}
+		if (collision.gameObject.CompareTag("LeftWall")){
+			//Debug.Log("triggerEnter with: " + collision.gameObject.name);
+
+			if(CanWallBang(leftBangTime)){
+				leftBangTime = (float)Time.time;
+				wallMultiply = OriginalwallMultiply;
+			}else{
+				leftBangTime = (float)Time.time;
+				wallMultiply.y = 1.1f;
+			}
+
+			if(rb.velocity.x < 0f){
+				rb.velocity = new Vector2(-rb.velocity.x * wallMultiply.x, (rb.velocity.y > 0) ? rb.velocity.y * wallMultiply.y : rb.velocity.y);
+			}else{
+				rb.velocity = new Vector2(rb.velocity.x * wallMultiply.x, (rb.velocity.y > 0) ? rb.velocity.y * wallMultiply.y : rb.velocity.y);
+			}
+		}
+	}
+
+	bool CanWallBang(float bangTime){
+		//Debug.Log("resetingwallbang" + Time.time);
+		if((float)Time.time - bangTime > timeBetweenBang){
+			Debug.Log("resetingwallbang Time.time: " + (float)Time.time +" bangtime: " + bangTime + " returned TRUE");
+			return true;
+		}else{
+			Debug.Log("resetingwallbang Time.time: " + (float)Time.time +" bangtime: " + bangTime + " returned FALSE");
+			return false;
+		}
+
 	}
 
 	void OnCollisionExit2D(Collision2D collision){
