@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{CAFE74CD-3B27-1A29-3DBF-94D20DC0791A}</ProjectGuid>
+    <ProjectGuid>{9DA8276B-53E5-6F5A-0D8B-51C9E1AD9109}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\FollowOnlyY.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\KillArea.cs" />
+     <Compile Include="Assets\Scripts\MenuManager.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\environmentController.cs" />
      <None Include="Assets\Editor\WakaTime\client\tests\samples\codefiles\twolinefile.txt" />
